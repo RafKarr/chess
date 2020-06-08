@@ -29,7 +29,7 @@ ApplicationWindow {
 
     BoardModel {
         id: boardModel
-        onNotifyMoveOfPiece: {
+        onNotifyMoveOfPiece: { //Slot to move a piece in the frontend
             console.log("Moving from " + indexFrom + " to " +indexTo );
             var piece;
             for (var i=0;i<board.pieces.length;i++){
@@ -37,6 +37,20 @@ ApplicationWindow {
                 if (piece.index === indexFrom) {
                     piece.parent = board.children[0].children[indexTo];
                     piece.index = indexTo;
+                    break;
+                }
+            }
+        }
+        onNotifyTaking: { //Slot to remove a piece in case of taking
+            console.log("Removing piece in " + index);
+            var piece;
+            var indexInArray;
+            for (var i=0;i<board.pieces.length;i++){
+                piece = board.pieces[i];
+                if (piece.index === index) {
+                    piece.destroy();
+                    indexInArray = board.pieces.indexOf(piece);
+                    board.pieces.splice(indexInArray,1);
                     break;
                 }
             }

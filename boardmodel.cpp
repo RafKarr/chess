@@ -46,11 +46,22 @@ void BoardModel::resetPieces()
 
 }
 
+/**
+ * @brief BoardModel::getIndex
+ * @param x
+ * @param y
+ * @return Index of board. (From 2D to 1D)
+ */
 int BoardModel::getIndex(int x, int y)
 {
     return x + 8*y;
 }
 
+/**
+ * @brief BoardModel::getIndexes
+ * @param index
+ * @return Indexes of board. (From 1D to 2D)
+ */
 QVector<int> BoardModel::getIndexes(int index)
 {
     QVector<int> returnVector(2);
@@ -76,10 +87,10 @@ QVector<int> BoardModel::getMovevementsOfPawn(piece piece, int x, int y)
     case WHITE_PAWN:
         if (m_turn == WHITE){
             if (y!=0){
-                if (checkAvailabilityOfSquare(piece,y-1)==0)
+                if (checkAvailabilityOfSquare(piece,getIndex(x,y-1))==0)
                     returnVector.append(getIndex(x,y-1));
                 if (y == 6) {
-                    if (checkAvailabilityOfSquare(piece,y-2)==0)
+                    if (checkAvailabilityOfSquare(piece,getIndex(x,y-2))==0)
                         returnVector.append(getIndex(x,y-2));
                 }
             }
@@ -88,10 +99,10 @@ QVector<int> BoardModel::getMovevementsOfPawn(piece piece, int x, int y)
     case BLACK_PAWN:
         if (m_turn == BLACK){
             if (y != 7){
-                if (checkAvailabilityOfSquare(piece,y+1)==0)
+                if (checkAvailabilityOfSquare(piece,getIndex(x,y+1))==0)
                     returnVector.append(getIndex(x,y+1));
                 if (y == 1) {
-                    if (checkAvailabilityOfSquare(piece,y+2)==0)
+                    if (checkAvailabilityOfSquare(piece,getIndex(x,y+2))==0)
                         returnVector.append(getIndex(x,y+2));
                 }
             }
@@ -153,7 +164,9 @@ QVector<int> BoardModel::getMovementsOfKnight(piece piece, int x, int y)
             newY = y + toAddY;
             if (( newX >= 0) && (newX <= 7)){
                 if ((newY >= 0) && (newY <= 7)){
-                    returnVector.append(getIndex(newX,newY));
+                    if (checkAvailabilityOfSquare(piece,getIndex(newX,newY))>=0){
+                        returnVector.append(getIndex(newX,newY));
+                    }
                 }
             }
 
@@ -177,6 +190,7 @@ QVector<int> BoardModel::getMovementsOfBishop(piece piece, int x, int y)
     int toAddY;
     int newX;
     int newY;
+    int availabilityOfSquare;
     int operators[4][2]= {{1,1},{1,-1},{-1,1},{-1,-1}};
 
 
@@ -205,10 +219,18 @@ QVector<int> BoardModel::getMovementsOfBishop(piece piece, int x, int y)
             toAddY += operators[i][1];
             newX = x + toAddX;
             newY = y + toAddY;
-            if (( newX >= 0) && (newX <= 7)){
+            if (( newX >= 0) && (newX <= 7)){ //Check if possible move if inside the board
                 if ((newY >= 0) && (newY <= 7)){
-                    returnVector.append(getIndex(newX,newY));
-                    continue;
+                    availabilityOfSquare = checkAvailabilityOfSquare(piece,getIndex(newX,newY)); //Check availability of possible moves
+                    if (availabilityOfSquare >=0){ //If empty or takeable piece...
+                        returnVector.append(getIndex(newX,newY)); //Append
+                        if (availabilityOfSquare == 0) { //If empty, keep looking for more possible squares
+                            continue;
+                        } else { //If takeable, stop looking
+                            break;
+                        }
+
+                    }
                 }
             }
             break;
@@ -233,6 +255,7 @@ QVector<int> BoardModel::getMovementsOfRook(piece piece, int x, int y)
     int toAddY;
     int newX;
     int newY;
+    int availabilityOfSquare;
     int operators[4][2]= {{1,0},{0,1},{-1,0},{0,-1}};
 
 
@@ -261,10 +284,18 @@ QVector<int> BoardModel::getMovementsOfRook(piece piece, int x, int y)
             toAddY += operators[i][1];
             newX = x + toAddX;
             newY = y + toAddY;
-            if (( newX >= 0) && (newX <= 7)){
+            if (( newX >= 0) && (newX <= 7)){ //Check if possible move if inside the board
                 if ((newY >= 0) && (newY <= 7)){
-                    returnVector.append(getIndex(newX,newY));
-                    continue;
+                    availabilityOfSquare = checkAvailabilityOfSquare(piece,getIndex(newX,newY)); //Check availability of possible moves
+                    if (availabilityOfSquare >=0){ //If empty or takeable piece...
+                        returnVector.append(getIndex(newX,newY)); //Append
+                        if (availabilityOfSquare == 0) { //If empty, keep looking for more possible squares
+                            continue;
+                        } else { //If takeable, stop looking
+                            break;
+                        }
+
+                    }
                 }
             }
             break;
@@ -340,9 +371,10 @@ QVector<int> BoardModel::getMovementOfKing(piece piece, int x, int y)
     for (int i=0; i<8; i++){
         newX = x + operators[i][0];
         newY = y + operators[i][1];
-        if (( newX >= 0) && (newX <= 7)){
+        if (( newX >= 0) && (newX <= 7)){ //Check if possible move is inside the board
             if ((newY >= 0) && (newY <= 7)){
-                returnVector.append(getIndex(newX,newY));
+                if (checkAvailabilityOfSquare(piece,getIndex(newX,newY))>=0) //If empty or takeable piece
+                    returnVector.append(getIndex(newX,newY)); //Append the possible move
             }
         }
     }
@@ -358,34 +390,29 @@ QVector<int> BoardModel::getMovementOfKing(piece piece, int x, int y)
  */
 int BoardModel::checkAvailabilityOfSquare(piece piece, int index)
 {
-//    enum piece checkedSquare = squares[index].getPiece();
+    enum piece checkedSquare = squares[index].getPiece();
 
-//    if (checkedSquare == EMPTY) return 0;
+    qDebug() << "Checked square is " << checkedSquare;
 
-//    if ((piece >= 1) && (piece <= 6)) { //If piece is white
-//            if (checkedSquare >= 7 && checkedSquare <= 11) {
-//                return 1;
-//            } else {
-//                return -1;
-//            }
-//    } else {
-//        if ((piece >= 7) && (piece <= 12)){ //If piece is black
-//            if (checkedSquare >= 1 && checkedSquare <= 5) {
-//                return 1;
-//            } else {
-//                return -1;
-//            }
-//        }
-//    }
+    if (checkedSquare == EMPTY) return 0;
 
-//    return -2;
+    if ((piece >= 1) && (piece <= 6)) { //If piece is white
+            if (checkedSquare >= 7 && checkedSquare <= 11) {
+                return 1;
+            } else {
+                return -1;
+            }
+    } else {
+        if ((piece >= 7) && (piece <= 12)){ //If piece is black
+            if (checkedSquare >= 1 && checkedSquare <= 5) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    }
 
-       (void)piece;
-       (void)index;
-
-    return 0;
-
-
+    return -2;
 }
 
 /**
@@ -475,11 +502,17 @@ QVector<int> BoardModel::getPossibleMoves(int index)
 void BoardModel::movePiece(int indexFrom, int indexTo)
 {
     QVector<int> possibleMoves = getPossibleMoves(indexFrom);
+    piece actualPiece = squares[indexFrom].getPiece();
+    int availabilityOfMove = checkAvailabilityOfSquare(actualPiece,indexTo);
     if (possibleMoves.contains(indexTo)){
-        piece actualPiece = squares[indexFrom].getPiece();
-        squares[indexFrom].setPiece(EMPTY);
-        squares[indexTo].setPiece(actualPiece);
-        changeTurn();
-        emit notifyMoveOfPiece(indexFrom, indexTo);
+        if (availabilityOfMove >=0) {
+            if (availabilityOfMove == 1){
+                emit notifyTaking(indexTo);
+            }
+            squares[indexFrom].setPiece(EMPTY);
+            squares[indexTo].setPiece(actualPiece);
+            changeTurn();
+            emit notifyMoveOfPiece(indexFrom, indexTo);
+        }
     }
 }
