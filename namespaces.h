@@ -11,13 +11,6 @@ namespace enums {
         BLACK_PAWN, BLACK_BISHOP, BLACK_KNIGHT, BLACK_QUEEN, BLACK_ROOK, BLACK_KING
     };
     Q_ENUM_NS(piece)
-
-
-
-}
-
-namespace utility {
-    QVector<int> getMovevementsOfPawn(enums::piece,int x, int y);
 }
 
 #endif // NAMESPACES_H

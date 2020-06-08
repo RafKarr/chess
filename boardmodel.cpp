@@ -7,6 +7,10 @@ BoardModel::BoardModel(QObject *parent) : QObject(parent), squares(64)
     resetPieces();
 }
 
+/**
+ * @brief BoardModel::resetPieces
+ * Resets model
+ */
 void BoardModel::resetPieces()
 {
     m_turn = WHITE;
@@ -57,6 +61,13 @@ QVector<int> BoardModel::getIndexes(int index)
     return returnVector;
 }
 
+/**
+ * @brief BoardModel::getMovevementsOfPawn
+ * @param piece
+ * @param x
+ * @param y
+ * @return Possible moves of pawn
+ */
 QVector<int> BoardModel::getMovevementsOfPawn(piece piece, int x, int y)
 {
     QVector<int> returnVector;
@@ -93,6 +104,13 @@ QVector<int> BoardModel::getMovevementsOfPawn(piece piece, int x, int y)
     return returnVector;
 }
 
+/**
+ * @brief BoardModel::getMovementsOfKnight
+ * @param piece
+ * @param x
+ * @param y
+ * @return Possible moves of knight
+ */
 QVector<int> BoardModel::getMovementsOfKnight(piece piece, int x, int y)
 {
     QVector<int> returnVector;
@@ -135,7 +153,7 @@ QVector<int> BoardModel::getMovementsOfKnight(piece piece, int x, int y)
             newY = y + toAddY;
             if (( newX >= 0) && (newX <= 7)){
                 if ((newY >= 0) && (newY <= 7)){
-
+                    returnVector.append(getIndex(newX,newY));
                 }
             }
 
@@ -145,6 +163,13 @@ QVector<int> BoardModel::getMovementsOfKnight(piece piece, int x, int y)
     return returnVector;
 }
 
+/**
+ * @brief BoardModel::getMovementsOfBishop
+ * @param piece
+ * @param x
+ * @param y
+ * @return Possible moves of bishop
+ */
 QVector<int> BoardModel::getMovementsOfBishop(piece piece, int x, int y)
 {
     QVector<int> returnVector;
@@ -194,6 +219,13 @@ QVector<int> BoardModel::getMovementsOfBishop(piece piece, int x, int y)
 
 }
 
+/**
+ * @brief BoardModel::getMovementsOfRook
+ * @param piece
+ * @param x
+ * @param y
+ * @return Possible moves of rook
+ */
 QVector<int> BoardModel::getMovementsOfRook(piece piece, int x, int y)
 {
     QVector<int> returnVector;
@@ -243,6 +275,13 @@ QVector<int> BoardModel::getMovementsOfRook(piece piece, int x, int y)
 
 }
 
+/**
+ * @brief BoardModel::getMovementOfQueen
+ * @param piece
+ * @param x
+ * @param y
+ * @return Possible moves of queen
+ */
 QVector<int> BoardModel::getMovementOfQueen(piece piece, int x, int y)
 {
     QVector<int> returnVector;
@@ -266,6 +305,13 @@ QVector<int> BoardModel::getMovementOfQueen(piece piece, int x, int y)
     }
 }
 
+/**
+ * @brief BoardModel::getMovementOfKing
+ * @param piece
+ * @param x
+ * @param y
+ * @return possible movements of a king
+ */
 QVector<int> BoardModel::getMovementOfKing(piece piece, int x, int y)
 {
     QVector<int> returnVector;
@@ -312,31 +358,40 @@ QVector<int> BoardModel::getMovementOfKing(piece piece, int x, int y)
  */
 int BoardModel::checkAvailabilityOfSquare(piece piece, int index)
 {
-    enum piece checkedSquare = squares[index].getPiece();
+//    enum piece checkedSquare = squares[index].getPiece();
 
-    if (checkedSquare == EMPTY) return 0;
+//    if (checkedSquare == EMPTY) return 0;
 
-    if ((piece >= 1) && (piece <= 6)) { //If piece is white
-            if (checkedSquare >= 7 && checkedSquare <= 11) {
-                return 1;
-            } else {
-                return -1;
-            }
-    } else {
-        if ((piece >= 7) && (piece <= 12)){ //If piece is black
-            if (checkedSquare >= 1 && checkedSquare <= 5) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    }
+//    if ((piece >= 1) && (piece <= 6)) { //If piece is white
+//            if (checkedSquare >= 7 && checkedSquare <= 11) {
+//                return 1;
+//            } else {
+//                return -1;
+//            }
+//    } else {
+//        if ((piece >= 7) && (piece <= 12)){ //If piece is black
+//            if (checkedSquare >= 1 && checkedSquare <= 5) {
+//                return 1;
+//            } else {
+//                return -1;
+//            }
+//        }
+//    }
 
-    return -2;
+//    return -2;
+
+       (void)piece;
+       (void)index;
+
+    return 0;
+
 
 }
 
-
+/**
+ * @brief BoardModel::changeTurn
+ * Changes turn to play
+ */
 void BoardModel::changeTurn()
 {
     if (m_turn == WHITE){
@@ -346,11 +401,21 @@ void BoardModel::changeTurn()
     }
 }
 
+/**
+ * @brief BoardModel::getPiece
+ * @param index
+ * @return Piece in certain square
+ */
 int BoardModel::getPiece(int index)
 {
     return squares[index].getPiece();
 }
 
+/**
+ * @brief BoardModel::getPossibleMoves
+ * @param index
+ * @return Possible moves of a certain piece in an index
+ */
 QVector<int> BoardModel::getPossibleMoves(int index)
 {
     piece piece = squares[index].getPiece();
@@ -401,6 +466,12 @@ QVector<int> BoardModel::getPossibleMoves(int index)
     return returnVector;
 }
 
+/**
+ * @brief BoardModel::movePiece
+ * Moves piece
+ * @param indexFrom
+ * @param indexTo
+ */
 void BoardModel::movePiece(int indexFrom, int indexTo)
 {
     QVector<int> possibleMoves = getPossibleMoves(indexFrom);

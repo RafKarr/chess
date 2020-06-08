@@ -1,5 +1,9 @@
 #include "square.h"
 
+/*
+ * Model for Square
+ */
+
 Square::Square()
 {
     setPiece(EMPTY);

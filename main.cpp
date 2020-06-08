@@ -9,21 +9,19 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-//    qmlRegisterUncreatableType<BoardModel>("BoardModels",1,0,"BoardModel",QStringLiteral("Can't create this type in QML"));
-    qmlRegisterType<BoardModel>("BoardModels",1,0,"BoardModel");
+    qmlRegisterType<BoardModel>("BoardModels",1,0,"BoardModel"); //Register Board model in QML
     qmlRegisterUncreatableMetaObject(
-      enums::staticMetaObject, // static meta object
-      "BoardModels",                // import statement (can be any string)
-      1, 0,                          // major and minor version of the import
-      "Pieces",                 // name in QML (does not have to match C++ name)
-      "Error: only enums"            // error in case someone tries to create a MyNamespace object
-    );
+      enums::staticMetaObject,
+      "BoardModels",
+      1, 0,
+      "Pieces",
+      "Error: only enums"
+    ); //Registers pieces enum in QML
 
 
     BoardModel boardModel;
 
     QQmlApplicationEngine engine;
-//    engine.rootContext()->setContextProperty(QStringLiteral("boardModel"),&boardModel);
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
