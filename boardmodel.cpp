@@ -87,11 +87,16 @@ QVector<int> BoardModel::getMovevementsOfPawn(piece piece, int x, int y)
     case WHITE_PAWN:
         if (m_turn == WHITE){
             if (y!=0){
-                if (checkAvailabilityOfSquare(piece,getIndex(x,y-1))==0)
+                if (checkAvailabilityOfSquare(piece,getIndex(x,y-1))==0) //Check normal moves of pawn
                     returnVector.append(getIndex(x,y-1));
                 if (y == 6) {
                     if (checkAvailabilityOfSquare(piece,getIndex(x,y-2))==0)
                         returnVector.append(getIndex(x,y-2));
+                }
+
+                for (int i = -1; i <= 1 ; i += 2){ //Check taking moves
+                    if (checkAvailabilityOfSquare(WHITE_PAWN,getIndex(x+i,y-1)))
+                        returnVector.append(getIndex(x+i,y-1));
                 }
             }
         }
@@ -99,11 +104,16 @@ QVector<int> BoardModel::getMovevementsOfPawn(piece piece, int x, int y)
     case BLACK_PAWN:
         if (m_turn == BLACK){
             if (y != 7){
-                if (checkAvailabilityOfSquare(piece,getIndex(x,y+1))==0)
+                if (checkAvailabilityOfSquare(piece,getIndex(x,y+1))==0) //Check normal moves of pawn
                     returnVector.append(getIndex(x,y+1));
                 if (y == 1) {
                     if (checkAvailabilityOfSquare(piece,getIndex(x,y+2))==0)
                         returnVector.append(getIndex(x,y+2));
+                }
+
+                for (int i = -1; i <= 1 ; i += 2){ //Check taking moves
+                    if (checkAvailabilityOfSquare(WHITE_PAWN,getIndex(x+i,y+1)))
+                        returnVector.append(getIndex(x+i,y+1));
                 }
             }
         }

@@ -41,6 +41,7 @@ private:
 signals:
     void notifyMoveOfPiece(int indexFrom, int indexTo);
     void notifyTaking(int index);
+    void notifyPromotion(int index);
 };
 
 #endif // BOARDMODEL_H
